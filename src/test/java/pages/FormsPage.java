@@ -32,10 +32,6 @@ public class FormsPage extends FormsObjects {
         PageFactory.initElements( Driver.get(), this );
     }
 
-    public void openPracticeForm() {
-        menuPracticeForm.click();
-    }
-
     public FormsPage setFirstName(String name) {
         if(name.isBlank()) throw new AssertionError("Name must not be null or blank");
         inputFirstName.sendKeys(name);

@@ -728,6 +728,34 @@ public class BasePage implements TestBase {
 		}
     }
 
+    public static WebElement getElementByText(String visibleText) {
+        try {
+            return Driver.get().findElement(By.xpath("//*[text()='"+visibleText+"']"));
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static List<WebElement> getAllElements(By locator) {
+        try {
+            return Driver.get().findElements(locator);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static int countElements(By locator) {
+        try {
+            return Driver.get().findElements(locator).size();
+        } catch (Exception e) {
+            return -1;
+        }
+    }
+
+    public static int countElements(String visibleText) {
+        return countElements(By.xpath("//*[text()='"+visibleText+"']"));
+    }
+
     public static void selectByText(WebElement select, String visibleText) {
         try {
             new Select(select).selectByVisibleText(visibleText);
@@ -754,6 +782,24 @@ public class BasePage implements TestBase {
             reporter.setPass("Selected option by index: " + index, true);
         } catch (Exception e) {
             reporter.setFail("Failed to select option by index " + index, true);
+			throw e;
+        }
+    }
+
+    public static void returnToMainWindow() {
+        Driver.get().close();
+        Object[] handles = Driver.get().getWindowHandles().toArray();
+        Driver.get().switchTo().window((String)handles[0]);
+        reporter.setPass("Return to main window", true);
+    }
+
+    public static void changeWindow(int index) {
+        try {
+            Object[] handles = Driver.get().getWindowHandles().toArray();
+            Driver.get().switchTo().window((String)handles[index]);
+            reporter.setPass("Changed to window on index: " + index, true);
+        } catch (Exception e) {
+            reporter.setFail("Failed to change window on index " + index, true);
 			throw e;
         }
     }

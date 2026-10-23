@@ -15,9 +15,6 @@ public class FormsObjects {
         SPORTS, READING, MUSIC
     }
     
-    @FindBy( linkText = "Practice Form" )
-    protected WebElement menuPracticeForm;
-    
     @FindBy( id = "firstName" )
     protected WebElement inputFirstName;
     

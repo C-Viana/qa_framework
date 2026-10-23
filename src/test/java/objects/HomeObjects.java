@@ -31,5 +31,14 @@ public class HomeObjects {
     
     @FindBy( css = "a[href='/books']" )
     protected WebElement categoryCardBooks;
+    
+    @FindBy( linkText = "Practice Form" )
+    protected WebElement menuPracticeForm;
+    
+    @FindBy( linkText = "Browser Windows" )
+    protected WebElement menuBrowserWindow;
+    
+    @FindBy( linkText = "Web Tables" )
+    protected WebElement menuWebTables;
 
 }

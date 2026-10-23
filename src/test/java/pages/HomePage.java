@@ -14,6 +14,18 @@ public class HomePage extends HomeObjects {
         PageFactory.initElements( Driver.get(), this );
     }
 
+    public void openPracticeForm() {
+        menuPracticeForm.click();
+    }
+
+    public void openBrowserWindow() {
+        menuBrowserWindow.click();
+    }
+
+    public void openWebTables() {
+        menuWebTables.click();
+    }
+
     public WebElement getCategory(categories category) {
         WebElement selected = null;
 

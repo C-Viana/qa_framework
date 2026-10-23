@@ -1,5 +1,5 @@
 @TestForms
-Feature: Book CRUD	
+Feature: Forms
 	@TestForms01
     Scenario: Fill form page with valid data
         Given I navigate to "Forms"

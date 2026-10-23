@@ -4,18 +4,11 @@ import java.util.Map;
 import com.github.javafaker.Faker;
 
 import common.BasePage;
-import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import pages.FormsPage;
 
 public class FormsDefinitions extends FormsPage {
-
-    @And("open the 'Practice Form'")
-    public void open_the_practice_form() {
-        BasePage.validateElementIsDisplayed(menuPracticeForm, "Validating menu option 'Practice Form'");
-        openPracticeForm();
-    }
 
     @When("I fill all fields with valid data")
     public void i_fill_all_fields_with_valid_data() {
