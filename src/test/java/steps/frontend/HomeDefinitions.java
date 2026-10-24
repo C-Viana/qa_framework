@@ -36,5 +36,11 @@ public class HomeDefinitions extends HomePage {
         BasePage.validateElementIsDisplayed(menuProgressBar, "Selecting menu option 'Progress Bar'");
         openProgressBar();
     }
+
+    @And("open the 'Sortable'")
+    public void open_the_sortable() {
+        BasePage.validateElementIsDisplayed(menuSortable, "Selecting menu option 'Sortable'");
+        openSortable();
+    }
     
 }

@@ -57,5 +57,9 @@ public class HomePage extends HomeObjects {
     public void openProgressBar() {
         menuProgressBar.click();
     }
+
+    public void openSortable() {
+        menuSortable.click();
+    }
     
 }
