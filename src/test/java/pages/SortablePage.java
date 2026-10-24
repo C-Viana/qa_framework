@@ -22,7 +22,6 @@ public class SortablePage extends SortableObjects {
     }
 
     public void arrange(List<String> expectedOrder) {
-        BasePage.waitFor(10);
         List<WebElement> initialOrder = BasePage.getAllElements(rowsSelector);
 
         BasePage.validateElementIsDisplayed(initialOrder.get(0), "Ordering elementes are displayed");
