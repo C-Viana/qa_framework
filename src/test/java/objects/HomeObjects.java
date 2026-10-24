@@ -40,5 +40,8 @@ public class HomeObjects {
     
     @FindBy( linkText = "Web Tables" )
     protected WebElement menuWebTables;
+    
+    @FindBy( linkText = "Progress Bar" )
+    protected WebElement menuProgressBar;
 
 }

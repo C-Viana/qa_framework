@@ -15,20 +15,26 @@ public class HomeDefinitions extends HomePage {
 
     @And("open the 'Practice Form'")
     public void open_the_practice_form() {
-        BasePage.validateElementIsDisplayed(menuPracticeForm, "Validating menu option 'Practice Form'");
+        BasePage.validateElementIsDisplayed(menuPracticeForm, "Selecting menu option 'Practice Form'");
         openPracticeForm();
     }
 
     @And("open the 'Browser Windows'")
     public void open_the_Browser_Windows() {
-        BasePage.validateElementIsDisplayed(menuBrowserWindow, "Validating menu option 'Practice Form'");
+        BasePage.validateElementIsDisplayed(menuBrowserWindow, "Selecting menu option 'Practice Form'");
         openBrowserWindow();
     }
 
     @And("open the 'Web Tables'")
     public void open_the_web_tables() {
-        BasePage.validateElementIsDisplayed(menuWebTables, "Validating menu option 'Web Tables'");
+        BasePage.validateElementIsDisplayed(menuWebTables, "Selecting menu option 'Web Tables'");
         openWebTables();
+    }
+
+    @And("open the 'Progress Bar'")
+    public void open_the_progress_bar() {
+        BasePage.validateElementIsDisplayed(menuProgressBar, "Selecting menu option 'Progress Bar'");
+        openProgressBar();
     }
     
 }

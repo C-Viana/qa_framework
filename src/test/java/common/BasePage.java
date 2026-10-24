@@ -11,6 +11,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -721,7 +722,6 @@ public class BasePage implements TestBase {
         try {
 			waitToBeVisible(element, null);
             validateEquals(true, BasePage.elementExists(element), logMessage);
-			reporter.setPass(logMessage, true);
 		} catch (AssertionFailedError e) {
 			reporter.setFail("Test failed because element was not visible.<br/>"+logMessage+".<br/>", true);
 			throw e;
@@ -802,6 +802,10 @@ public class BasePage implements TestBase {
             reporter.setFail("Failed to change window on index " + index, true);
 			throw e;
         }
+    }
+
+    public static boolean timer(LocalDateTime startTime, LocalDateTime finalTime) {
+        return startTime.isBefore(finalTime);
     }
 
 }

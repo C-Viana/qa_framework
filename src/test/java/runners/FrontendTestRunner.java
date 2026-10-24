@@ -15,7 +15,7 @@ import io.cucumber.core.options.Constants;
 @SelectClasspathResource("features/frontend")
 @ConfigurationParameter(key = Constants.GLUE_PROPERTY_NAME, value = "steps/frontend")
 @ConfigurationParameter(key = Constants.PLUGIN_PROPERTY_NAME, value = "pretty, html:target/cucumber-reports.html")
-@ConfigurationParameter(key = Constants.FILTER_TAGS_PROPERTY_NAME, value = "@TestElements04")
+@ConfigurationParameter(key = Constants.FILTER_TAGS_PROPERTY_NAME, value = "@TestWidgets01")
 @ConfigurationParameter(key = "dryRun", value = "true")
 public class FrontendTestRunner implements TestBase {
 
