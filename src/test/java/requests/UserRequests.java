@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import common.TestSupport;
+import config.Config;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
@@ -23,7 +24,7 @@ public class UserRequests extends TestSupport {
                 .contentType(ContentType.JSON)
                 .body(setCredentials(username, password))
             .when()
-            .post(properties.getProperty("api.endpoint.account.user"))
+            .post(Config.get("api.endpoint.account.user"))
             .andReturn();
     }
 
@@ -33,7 +34,7 @@ public class UserRequests extends TestSupport {
                 .contentType(ContentType.JSON)
                 .body(setCredentials(username, password))
             .when()
-            .post(properties.getProperty("api.endpoint.account.token"))
+            .post(Config.get("api.endpoint.account.token"))
             .andReturn();
     }
 
@@ -43,14 +44,14 @@ public class UserRequests extends TestSupport {
                 .contentType(ContentType.JSON)
                 .body(setCredentials(username, password))
             .when()
-            .post(properties.getProperty("api.endpoint.account.authorized"))
+            .post(Config.get("api.endpoint.account.authorized"))
             .andReturn();
     }
 
-    public Response reservation(String userId) {
-        //TODO: parametrizar credenciais
-        String endpoint = properties.getProperty("api.endpoint.account.user")+"/"+userId;
-        String token = new UserRequests().authenticate("Miss Dimple Lowe", "s#NX6v76!J6VF").getBody().jsonPath().getString("token");
+    public Response reservation(String userId, String username, String password) {
+        String endpoint = Config.get("api.endpoint.account.user")+"/"+userId;
+
+        String token = new UserRequests().authenticate(username, password).getBody().jsonPath().getString("token");
 
         return RestAssured
             .given()

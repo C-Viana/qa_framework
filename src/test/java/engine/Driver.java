@@ -5,18 +5,29 @@ import java.time.Duration;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 
-public class Driver implements TestBase {
+import config.Config;
+
+public class Driver {
     
     public static WebDriver driver = null;
 
+    private static ChromeOptions configDriver() {
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--window-size=1920,1080");
+        options.addArguments("--disable-gpu");
+        if(Config.get("test.headless").toLowerCase().equals("true"))
+            options.addArguments("--headless=new");
+        return options;
+    }
+
     public static WebDriver get() {
         if( driver == null ) {
-            System.setProperty(properties.getProperty("selenium.chromedriver.property"), properties.getProperty("selenium.chromedriver.path"));
-            driver = new ChromeDriver();
+            driver = new ChromeDriver(configDriver());
+            
             driver.manage().timeouts().pageLoadTimeout( Duration.ofSeconds(50) );
-            driver.manage().window().setSize(new Dimension(1920, 1080));
-            driver.get(properties.getProperty("application.prod.url"));
+            driver.get(Config.get("application.prod.url"));
         }
         return driver;
     }

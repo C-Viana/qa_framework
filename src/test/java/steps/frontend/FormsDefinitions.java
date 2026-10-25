@@ -1,41 +1,52 @@
 package steps.frontend;
 
 import java.util.Map;
-import com.github.javafaker.Faker;
 
-import common.BasePage;
+import common.SeleniumUtils;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import net.datafaker.Faker;
+import objects.FormsObjects.gender;
+import objects.FormsObjects.hobbies;
 import pages.FormsPage;
+import reporter.Reports;
 
-public class FormsDefinitions extends FormsPage {
+public class FormsDefinitions {
+
+    private final FormsPage page;
+    private final Faker faker;
+
+    public FormsDefinitions(FormsPage formsPage) {
+        this.page = formsPage;
+        this.faker = new Faker();
+    }
 
     @When("I fill all fields with valid data")
     public void i_fill_all_fields_with_valid_data() {
-        BasePage.validateElementIsDisplayed(inputFirstName, "Form is displayed");
-        setFirstName(Faker.instance().name().firstName())
-        .setLastName(Faker.instance().name().lastName())
-        .setEmail(Faker.instance().internet().emailAddress())
-        .setGender(gender.OTHER)
-        .setPhoneNumber(Faker.instance().phoneNumber().cellPhone())
-        .setBirthdate(18, 9, 1996)
-        .setSubjects("English", "Biology")
-        .setHobbies(hobbies.SPORTS)
-        .setPicture(System.getProperty("user.dir")+"\\src\\test\\resources\\testingdata\\sample_text.txt")
-        .setAddress(Faker.instance().address().fullAddress())
-        .setState()
-        .setCity();
+        SeleniumUtils.validateElementIsDisplayed(page.getFirstname(), "Form is displayed");
+        page.setFirstName(faker.name().firstName())
+            .setLastName(faker.name().lastName())
+            .setEmail(faker.internet().emailAddress())
+            .setGender(gender.OTHER)
+            .setPhoneNumber(faker.phoneNumber().cellPhone())
+            .setBirthdate(18, 9, 1996)
+            .setSubjects("English", "Biology")
+            .setHobbies(hobbies.SPORTS)
+            .setPicture(System.getProperty("user.dir")+"\\src\\test\\resources\\testingdata\\sample_text.txt")
+            .setAddress(faker.address().fullAddress())
+            .setState()
+            .setCity();
 
-        BasePage.reporter.setInfo("Form filled", true);
-        submit();
+        Reports.get().setInfo("Form filled", true);
+        page.submit();
     }
 
     @Then("my data is confirmed on a modal window")
     public void my_data_is_confirmed_on_a_modal_window() {
-        BasePage.validateElementIsDisplayed(modalTableRows, "Confirmation modal is displayed");
-        Map<String,String> content = getConfirmationModalContent();
-        for (String label : labels) {
-            BasePage.validateTextNotBlank(content.get(label), label + " has valid value ["+content.get(label)+"]", false);
+        SeleniumUtils.validateElementIsDisplayed(page.getModalTable(), "Confirmation modal is displayed");
+        Map<String,String> content = page.getConfirmationModalContent();
+        for (String label : page.labels) {
+            SeleniumUtils.validateTextNotBlank(content.get(label), label + " has valid value ["+content.get(label)+"]", false);
         }
     }
     

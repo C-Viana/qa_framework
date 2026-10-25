@@ -27,7 +27,7 @@ Feature: Elements
     Then the registries will no more be available
 
   @TestElements04
-  Scenario: Create a single registry
+  Scenario: Create multiple registries
     Given I navigate to "Elements"
     And open the 'Web Tables'
     When I create 12 new registries

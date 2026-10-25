@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import common.TestSupport;
+import config.Config;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
@@ -31,35 +32,35 @@ public class BookRequests extends TestSupport {
         return payload;
     }
     
-    protected Response getAllBooks() {
+    public Response getAllBooks() {
         return RestAssured
             .given()
             .when()
-            .get(properties.getProperty("api.endpoint.books"))
+            .get(Config.get("api.endpoint.books"))
             .andReturn();
     }
     
-    protected Response reservation(String userId, String... isbn) {
-        String token = new UserRequests().authenticate("Miss Dimple Lowe", "s#NX6v76!J6VF").getBody().jsonPath().getString("token");
+    public Response reservation(String userId, String username, String password, String... isbn) {
+        String token = new UserRequests().authenticate(username, password).getBody().jsonPath().getString("token");
         return RestAssured
             .given()
                 .contentType(ContentType.JSON)
                 .header("Authorization", "Bearer "+token)
                 .body(setReservation(userId, isbn))
             .when()
-            .post(properties.getProperty("api.endpoint.books"))
+            .post(Config.get("api.endpoint.books"))
             .andReturn();
     }
     
-    protected Response clearReservations(String userId) {
-        String token = new UserRequests().authenticate("Miss Dimple Lowe", "s#NX6v76!J6VF").getBody().jsonPath().getString("token");
+    public Response clearReservations(String userId, String username, String password) {
+        String token = new UserRequests().authenticate(username, password).getBody().jsonPath().getString("token");
         return RestAssured
             .given()
                 .contentType(ContentType.JSON)
                 .header("Authorization", "Bearer "+token)
                 .queryParam("UserId", userId)
             .when()
-            .delete(properties.getProperty("api.endpoint.books"))
+            .delete(Config.get("api.endpoint.books"))
             .andReturn();
     }
 }

@@ -20,13 +20,9 @@ public class ExtentReportsImpl implements ReporterInterface {
     private String ROOT_PATH = "";
     private String ENVIRONMENT = "";
 
-    public ExtentReportsImpl() {
-        setResultPath("SICREDI - API TESTS");
-    }
-
     @Override
     public void setResultPath(String scenarioname) {
-        ROOT_PATH = "src/test/results/";
+        ROOT_PATH = "src/test/results/" + scenarioname;
         FilesSupport.createFolders(ROOT_PATH);
     }
 

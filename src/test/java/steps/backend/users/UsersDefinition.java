@@ -1,91 +1,84 @@
 package steps.backend.users;
 
-import com.github.javafaker.Faker;
-
-import engine.TestBase;
-import io.cucumber.java.After;
-import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import net.datafaker.Faker;
+import reporter.Reports;
 import requests.UserRequests;
+import steps.backend.ScenarioContext;
 
-public class UsersDefinition extends UserRequests {
+public class UsersDefinition {
 
-    private String username, password, userId, token;
+    private final UserRequests userRequests;
+    private final ScenarioContext ctx;
+    private final Faker faker;
 
-    @Before
-    void startCase() {
-        reporter.startTest("User Scenario");
+    public UsersDefinition(UserRequests userRequests, ScenarioContext ctx) {
+        this.userRequests = userRequests;
+        this.ctx = ctx;
+        this.faker = new Faker();
     }
 
-    @After
-    void finishCase() {
-        response = null;
-        responseBody = null;
-    }
-
-    @Given("I have an username and password")
+    @Given("I have a username and password")
     public void i_have_an_username_and_password() {
-        username = Faker.instance().name().fullName();
-        password = Faker.instance().internet().password(8, 12, true, true, true);
-        password += "#2P";
-        validateEquals( false, (username.isBlank() && password.isBlank()), "User data must be set.\nUsername: "+ username + "\nPassword: " + password );
+        ctx.username = faker.name().fullName();
+        ctx.password = faker.credentials().password(8, 12, true, true, true);
+        ctx.password += "#2P";
+
+        userRequests.validateEquals( false, (ctx.username.isBlank() && ctx.password.isBlank()), "User data must be set.\nUsername: "+ ctx.username + "\nPassword: " + ctx.password );
     }
 
     @When("posting my data to create a new user")
     public void posting_my_data_to_create_a_new_user() {
-        response = create(username, password);
-        reporter.setInfo("RESPONSE:\n"+response.asPrettyString());
-        responseBody = toJson(response.asString());
+        ctx.response = userRequests.create(ctx.username, ctx.password);
+        Reports.get().setInfo("RESPONSE:\n"+ctx.response.asPrettyString());
+        ctx.responseBody = userRequests.toJson(ctx.response.asString());
     }
 
-    @Then("an user ID will be created")
+    @Then("a user ID will be created")
     public void an_user_id_will_be_created() {
-        userId = responseBody.get("userID").asString();
-        validateEquals(false, userId.isBlank(), "User ID created: " + userId);
+        ctx.userId = ctx.responseBody.get("userID").asString();
+        userRequests.validateEquals(false, ctx.userId.isBlank(), "User ID created: " + ctx.userId);
     }
     
     @Given("I have a valid credential")
     public void i_have_a_valid_credential() {
-        //TODO: parametrizar credenciais
-        username = "Miss Dimple Lowe";
-        password = "s#NX6v76!J6VF";
-        validateEquals( false, (username.isBlank() && password.isBlank()), "User data must be set.\nUsername: "+ username + "\nPassword: " + password );
+        userRequests.validateEquals( false, (ctx.username.isBlank() && ctx.password.isBlank()), "User data must be set.\nUsername: "+ ctx.username + "\nPassword: " + ctx.password );
     }
 
     @When("posting my data to authenticate access")
     public void posting_my_data_to_authenticate_access() {
-        response = authenticate(username, password);
-        reporter.setInfo("RESPONSE:\n"+response.asPrettyString());
-        responseBody = toJson(response.asString());
+        ctx.response = userRequests.authenticate(ctx.username, ctx.password);
+        Reports.get().setInfo("RESPONSE:\n"+ctx.response.asPrettyString());
+        ctx.responseBody = userRequests.toJson(ctx.response.asString());
     }
 
     @And("an access token will be created")
     public void an_access_token_will_be_created() {
-        token = responseBody.get("token").asString();
-        validateEquals(false, token.isBlank(), "User ID created: " + token);
+        ctx.token = ctx.responseBody.get("token").asString();
+        userRequests.validateEquals(false, ctx.token.isBlank(), "User ID created: " + ctx.token);
     }
 
     @When("posting my data to check authorization access")
     public void posting_my_data_to_check_authorization_access() {
-        response = authorization(username, password);
-        reporter.setInfo("RESPONSE:\n"+response.asPrettyString());
-        responseBody = toJson(response.asString());
+        ctx.response = userRequests.authorization(ctx.username, ctx.password);
+        Reports.get().setInfo("RESPONSE:\n"+ctx.response.asPrettyString());
+        ctx.responseBody = userRequests.toJson(ctx.response.asString());
     }
 
     @And("my authorization will be true")
     public void my_authorization_will_be_true() {
-        Boolean result = response.body().as(Boolean.class);
-        validateEquals(true, result, "User authorization is valid: " + result);
+        Boolean result = ctx.response.body().as(Boolean.class);
+        userRequests.validateEquals(true, result, "User authorization is valid: " + result);
     }
 
     @When("I request my reservation showcase")
     public void i_request_my_reservation_showcase() {
-        response = reservation(TestBase.get("userId").toString());
-        reporter.setInfo("RESPONSE:\n"+response.asPrettyString());
-        responseBody = toJson(response.asString());
+        ctx.response = userRequests.reservation(ctx.userId, ctx.username, ctx.password);
+        Reports.get().setInfo("RESPONSE:\n"+ctx.response.asPrettyString());
+        ctx.responseBody = userRequests.toJson(ctx.response.asString());
     }
     
 }

@@ -8,14 +8,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.PageFactory;
 
-import common.BasePage;
+import common.SeleniumUtils;
 import engine.Driver;
 
 public class FormsPage extends FormsObjects {
 
-    protected List<String> labels = Arrays.asList(
+    public List<String> labels = Arrays.asList(
             "Student Name",
             "Student Email",
             "Gender",
@@ -30,6 +31,14 @@ public class FormsPage extends FormsObjects {
     
     public FormsPage() {
         PageFactory.initElements( Driver.get(), this );
+    }
+
+    public WebElement getFirstname() {
+        return inputFirstName;
+    }
+
+    public WebElement getModalTable() {
+        return modalTableRows;
     }
 
     public FormsPage setFirstName(String name) {
@@ -76,9 +85,9 @@ public class FormsPage extends FormsObjects {
 
     public FormsPage setBirthdate(int day, int month, int year) {
         inputBirthdate.click();
-        BasePage.waitFor(1);
-        BasePage.selectByText(selectBirthdateYear, String.valueOf(year));
-        BasePage.selectByValue(selectBirthdateMonth, String.valueOf(month-1));
+        SeleniumUtils.waitToBeVisibleIgnoringExceptions(selectBirthdateYear, 10);
+        SeleniumUtils.selectByText(selectBirthdateYear, String.valueOf(year));
+        SeleniumUtils.selectByValue(selectBirthdateMonth, String.valueOf(month-1));
         tableBirthdateDay.findElement(By.xpath("//div[@class='react-datepicker__month']//div[text()='"+day+"']")).click();
 
         return this;
@@ -88,7 +97,7 @@ public class FormsPage extends FormsObjects {
         for (String opt : options) {
             inputSubjects.click();
             inputSubjects.sendKeys(opt.trim());
-            BasePage.waitFor(1);
+            SeleniumUtils.waitToBeVisibleIgnoringExceptions(inputSubjectsSelection, 10);
             inputSubjectsSelection.click();
         }
         return this;
@@ -120,7 +129,7 @@ public class FormsPage extends FormsObjects {
     }
 
     public FormsPage setAddress(String address) {
-        BasePage.scrollBottomPage();
+        SeleniumUtils.scrollBottomPage();
         if(address.isBlank()) throw new AssertionError("Address must not be null or blank");
         textareaAddress.sendKeys(address);
         return this;
@@ -128,7 +137,7 @@ public class FormsPage extends FormsObjects {
 
     public FormsPage setState() {
         selectState.click();
-        BasePage.waitFor(1);
+        SeleniumUtils.waitToBeVisibleIgnoringExceptions(selectStateOptions.get(0), 10);
         int listSize = selectStateOptions.size();
         selectStateOptions.get(
                 new Random().nextInt(listSize)
@@ -138,7 +147,7 @@ public class FormsPage extends FormsObjects {
 
     public FormsPage setCity() {
         selectCity.click();
-        BasePage.waitFor(1);
+        SeleniumUtils.waitToBeVisibleIgnoringExceptions(selectCityOptions.get(0), 10);
         int listSize = selectCityOptions.size();
         selectCityOptions.get(
                 new Random().nextInt(listSize)

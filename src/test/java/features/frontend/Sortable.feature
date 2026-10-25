@@ -7,4 +7,4 @@ Feature: Sortable
     And open the 'Sortable'
     When I arrange all elements in the following order
       | One | Two | Three | Four | Five | Six |
-    Then all positions will be chenged accordingly
+    Then all positions will be changed accordingly

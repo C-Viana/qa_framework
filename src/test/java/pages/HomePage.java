@@ -6,6 +6,7 @@ import org.openqa.selenium.InvalidArgumentException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.PageFactory;
 
+import common.SeleniumUtils;
 import engine.Driver;
 
 public class HomePage extends HomeObjects {
@@ -15,6 +16,7 @@ public class HomePage extends HomeObjects {
     }
 
     public WebElement getCategory(categories category) {
+        SeleniumUtils.validateElementIsDisplayed(categoryCardForms, "Card "+category+" is displayed");
         WebElement selected = null;
 
         switch (category) {
@@ -43,22 +45,27 @@ public class HomePage extends HomeObjects {
     }
 
     public void openPracticeForm() {
+        SeleniumUtils.validateElementIsDisplayed(menuPracticeForm, "Selecting menu option 'Practice Form'");
         menuPracticeForm.click();
     }
 
     public void openBrowserWindow() {
+        SeleniumUtils.validateElementIsDisplayed(menuBrowserWindow, "Selecting menu option 'Practice Form'");
         menuBrowserWindow.click();
     }
 
     public void openWebTables() {
+        SeleniumUtils.validateElementIsDisplayed(menuWebTables, "Selecting menu option 'Web Tables'");
         menuWebTables.click();
     }
 
     public void openProgressBar() {
+        SeleniumUtils.validateElementIsDisplayed(menuProgressBar, "Selecting menu option 'Progress Bar'");
         menuProgressBar.click();
     }
 
     public void openSortable() {
+        SeleniumUtils.validateElementIsDisplayed(menuSortable, "Selecting menu option 'Sortable'");
         menuSortable.click();
     }
     

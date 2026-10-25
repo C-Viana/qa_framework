@@ -2,7 +2,7 @@ package pages;
 
 import org.openqa.selenium.support.PageFactory;
 
-import common.BasePage;
+import common.SeleniumUtils;
 import engine.Driver;
 import objects.BrowserWindowsObjects;
 
@@ -12,19 +12,19 @@ public class BrowserWindowsPage extends BrowserWindowsObjects {
         PageFactory.initElements(Driver.get(), this);
     }
 
-    protected void openNewWindow() {
-        BasePage.waitFor(3);
+    public void openNewWindow() {
+        SeleniumUtils.waitToBeVisibleIgnoringExceptions(buttonNewWindow, 20);
         buttonNewWindow.click();
     }
 
-    protected void changeWindow(int index) {
-        BasePage.changeWindow(index);
+    public void changeWindow(int index) {
+        SeleniumUtils.changeWindow(index);
     }
 
-    protected void validateSampleMessage(String expectedMessage) {
+    public void validateSampleMessage(String expectedMessage) {
         String currentText = textNewWindowMessage.getText();
-        BasePage.validateEquals(expectedMessage, currentText, "Validating message matches");
-        BasePage.returnToMainWindow();
+        SeleniumUtils.validateEquals(expectedMessage, currentText, "Validating message matches");
+        SeleniumUtils.returnToMainWindow();
     }
 
 }

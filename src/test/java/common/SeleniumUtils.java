@@ -1,8 +1,5 @@
 package common;
 
-import java.awt.AWTException;
-import java.awt.Robot;
-import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -40,16 +37,17 @@ import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.opentest4j.AssertionFailedError;
 
+import config.Config;
 import engine.Driver;
-import engine.TestBase;
+import reporter.Reports;
 
 
-public class BasePage implements TestBase {
+public class SeleniumUtils {
 	
     private static Point chromePosition;
     private static Dimension chromeDimensions;
 
-    public BasePage() {
+    public SeleniumUtils() {
         throw new IllegalStateException("Erro para iniciar a classe General.");
     }
 
@@ -64,14 +62,9 @@ public class BasePage implements TestBase {
      * @param path
      */
     public static void createFolders(String path) {
-        try {
-            File f = new File(path);
-            if (!f.exists()) {
-                f.mkdirs();
-            }
-        } catch (Exception e) {
-            Logger.getLogger(BasePage.class.getName()).log(Level.WARNING, "Erro para utilizar createFolders(String path)", e);
-            Thread.currentThread().interrupt();
+        File f = new File(path);
+        if (!f.exists()) {
+            f.mkdirs();
         }
     }
 
@@ -109,12 +102,7 @@ public class BasePage implements TestBase {
      * @param value
      */
     public static void sendKeysByJavascript( WebElement element, String value ) {
-        try {
-            ((JavascriptExecutor) Driver.get()).executeScript("document[0].value = '" + value + "';", element);
-        } catch (Exception e) {
-            Logger.getLogger(BasePage.class.getName()).log(Level.WARNING, "Erro para utilizar sendKeysByJavascript(WebElement element, String value)", e);
-            Thread.currentThread().interrupt();
-        }
+        ((JavascriptExecutor) Driver.get()).executeScript("arguments[0].value = '" + value + "';", element);
     }
 
     /**
@@ -128,12 +116,7 @@ public class BasePage implements TestBase {
      * @param value
      */
     public static void clickByJavascript(WebElement element) {
-        try {
-            ((JavascriptExecutor) Driver.get()).executeScript("document[0].click()", element);
-        } catch (Exception e) {
-            Logger.getLogger(BasePage.class.getName()).log(Level.WARNING, "Erro para utilizar clickByJavascript(WebElement element)", e);
-            Thread.currentThread().interrupt();
-        }
+        ((JavascriptExecutor) Driver.get()).executeScript("arguments[0].click()", element);
     }
 
     /**
@@ -145,16 +128,11 @@ public class BasePage implements TestBase {
      * @param element
      */
     public static void clickByCoordinates(WebElement element) {
-        try {
-            Point coords = BasePage.getElementCenter(element);
-            Actions act = new Actions(Driver.get());
-            act.moveToElement(element, 0, 0).build().perform();
-            act.moveByOffset(coords.x, coords.y).click().build().perform();
-            act = null;
-        } catch (Exception e) {
-            Logger.getLogger(BasePage.class.getName()).log(Level.WARNING, "Erro para utilizar clickByCoordinates(WebElement element)", e);
-            Thread.currentThread().interrupt();
-        }
+        Point coords = SeleniumUtils.getElementCenter(element);
+        Actions act = new Actions(Driver.get());
+        act.moveToElement(element, 0, 0).build().perform();
+        act.moveByOffset(coords.x, coords.y).click().build().perform();
+        act = null;
     }
 
     /**
@@ -166,14 +144,9 @@ public class BasePage implements TestBase {
      * @param posY
      */
     public static void clickByCoordinates(int posX, int posY) {
-        try {
-            Actions act = new Actions(Driver.get());
-            act.moveByOffset(posX, posY).click().build().perform();
-            act = null;
-        } catch (Exception e) {
-            Logger.getLogger(BasePage.class.getName()).log(Level.WARNING, "Erro para utilizar clickByCoordinates(int posX, int posY)", e);
-            Thread.currentThread().interrupt();
-        }
+        Actions act = new Actions(Driver.get());
+        act.moveByOffset(posX, posY).click().build().perform();
+        act = null;
     }
 
     /**
@@ -187,22 +160,11 @@ public class BasePage implements TestBase {
      * @param element
      */
     public static void scrollIntoByJavascript(WebElement element) {
-        try {
-            ((JavascriptExecutor) Driver.get()).executeScript("document.querySelector('a.sb_pagN').scrollIntoView();", element);
-        } catch (Exception e) {
-            Logger.getLogger(BasePage.class.getName()).log(Level.WARNING, "Erro para utilizar scrollIntoByJavascript(WebElement element)", e);
-            Thread.currentThread().interrupt();
-        }
+        ((JavascriptExecutor) Driver.get()).executeScript("arguments[0].scrollIntoView(true);", element);
     }
 
     public static void scrollBottomPage() {
-        try {
-            ((JavascriptExecutor) Driver.get()).executeScript("window.scrollTo(0, document.body.scrollHeight);");
-            waitFor(1);
-        } catch (Exception e) {
-            Logger.getLogger(BasePage.class.getName()).log(Level.WARNING, "Erro para utilizar scrollIntoByJavascript(WebElement element)", e);
-            Thread.currentThread().interrupt();
-        }
+        ((JavascriptExecutor) Driver.get()).executeScript("window.scrollTo(0, document.body.scrollHeight);");
     }
 
     /**
@@ -213,35 +175,8 @@ public class BasePage implements TestBase {
      * @return
      */
     public static String getTagAttributesByJavaScript(WebElement element) {
-        String test = null;
-        try {
-            test = ((JavascriptExecutor) Driver.get()).executeScript("return arguments[0].attributes;", element).toString();
-        } catch (Exception e) {
-            Logger.getLogger(BasePage.class.getName()).log(Level.WARNING, "Erro para utilizar getTagAttributesByJavaScript(WebElement element)", e);
-            Thread.currentThread().interrupt();
-        }
+        String test  = ((JavascriptExecutor) Driver.get()).executeScript("return arguments[0].attributes;", element).toString();
         return test;
-    }
-
-    /**
-     * Este método utiliza a classe Robot do Java para simular interações do teclado
-     * ao navegador. <br>
-     * Informe uma String com o valor que deseja simular a digitação.
-     * <br>
-     * 
-     * @param word
-     */
-    public static void typeKeyboard( String word ) {
-        try {
-            Robot robot = new Robot();
-            for (int i = 0; i < word.length(); i++) {
-                robot.keyPress( KeyEvent.getExtendedKeyCodeForChar(word.charAt(i)) );
-                robot.keyRelease( KeyEvent.getExtendedKeyCodeForChar(word.charAt(i)) );
-            }
-        } catch (AWTException e) {
-            Logger.getLogger(BasePage.class.getName()).log(Level.WARNING, "Erro para utilizar typeKeyboard(String word)", e);
-            Thread.currentThread().interrupt();
-        }
     }
 
     /**
@@ -334,121 +269,7 @@ public class BasePage implements TestBase {
      * @param destination
      */
     public static void dragElementTo( WebElement origin, WebElement destination ) {
-        try {
-            new Actions(Driver.get()).dragAndDrop(origin, destination).build().perform();
-        } catch (Exception e) {
-            Logger.getLogger(BasePage.class.getName()).log(Level.WARNING, "Erro para utilizar dragElementTo(WebElement origin, WebElement destination)", e);
-            Thread.currentThread().interrupt();
-            //throw e;
-        }
-    }
-
-
-    /**
-     * Este método utiliza a classe Robot do Java para simular interações do teclado
-     * ao navegador. <br>
-     * Informe um caractere (char) com o valor que deseja simular a digitação.
-     * <br>
-     * 
-     * @param letter
-     */
-    public static void typeKeyboard(char letter) {
-        try {
-            Robot robot = new Robot();
-            robot.keyPress(KeyEvent.getExtendedKeyCodeForChar(letter));
-            robot.keyRelease(KeyEvent.getExtendedKeyCodeForChar(letter));
-        } catch (AWTException e) {
-            Logger.getLogger(BasePage.class.getName()).log(Level.WARNING,
-                    "Erro para utilizar typeKeyboard(char letter)", e);
-            Thread.currentThread().interrupt();
-        }
-    }
-
-    /**
-     * Este método utiliza a classe Robot do Java para simular interações do teclado
-     * ao navegador. <br>
-     * Realiza a digitação da tecla TAB.
-     * 
-     */
-    public static void typeKeyboardTAB() {
-        try {
-            Robot robot = new Robot();
-            robot.keyPress(KeyEvent.VK_TAB);
-            robot.keyRelease(KeyEvent.VK_TAB);
-            robot = null;
-        } catch (AWTException e) {
-            Logger.getLogger(BasePage.class.getName()).log(Level.WARNING,
-                    "Erro para utilizar typeKeyboardTAB()", e);
-            Thread.currentThread().interrupt();
-        }
-    }
-
-    /**
-     * Este método utiliza a classe Robot do Java para simular interações do teclado
-     * ao navegador. <br>
-     * Realiza a digitação da tecla ENTER.
-     * 
-     */
-    public static void typeKeyboardENTER() {
-        try {
-            Robot robot = new Robot();
-            robot.keyPress(KeyEvent.VK_ENTER);
-            robot.keyRelease(KeyEvent.VK_ENTER);
-            robot = null;
-        } catch (Exception e) {
-            Logger.getLogger(BasePage.class.getName()).log(Level.WARNING,
-                    "Erro para utilizar typeKeyboardENTER()", e);
-            Thread.currentThread().interrupt();
-        }
-    }
-
-    /**
-     * Através da classe java.awt.Robot simula a utilização de uma tecla através
-     * das ações key press e key release respectivamente.
-     * <br>
-     * Como parâmetro, considere utilizar a java.awt.event.KeyEvent, que
-     * retornará um valor em Integer apropriado a este método.
-     * <br>
-     * 
-     * @param key
-     */
-    public static void typeKeyboard(int key) {
-        try {
-            Robot robot = new Robot();
-            robot.keyPress(key);
-            robot.keyRelease(key);
-            robot = null;
-        } catch (Exception e) {
-            Logger.getLogger(BasePage.class.getName()).log(Level.WARNING,
-                    "Erro para utilizar typeKeyboard(int key)", e);
-            Thread.currentThread().interrupt();
-        }
-    }
-
-    /**
-     * Através da classe java.awt.Robot simula o movimento do mouse para posicionar
-     * o cursor nas coordenadas x e y informadas pelos parâmetros.
-     * <br>
-     * Atente-se que a classe Robot funciona independente da área do viewport do
-     * navegador, considerando todo o tamanho da tela do monitor.
-     * <br>
-     * Assim, pode ser preciso compensar o posicionamento para atingir as
-     * coordenadas esperadas.
-     * <br>
-     * 
-     * @param posX
-     * @param posY
-     */
-    public static void moveMouseTo(int posX, int posY) {
-        try {
-            Robot robot = new Robot();
-            robot.mouseMove(posX, posY);
-            robot = null;
-        } catch (Exception e) {
-            Logger.getLogger(BasePage.class.getName()).log(Level.WARNING,
-                    "Erro para utilizar moveMouseTo(int posX, int posY)", e);
-            Thread.currentThread().interrupt();
-        }
+        new Actions(Driver.get()).dragAndDrop(origin, destination).build().perform();
     }
 
     /**
@@ -465,9 +286,9 @@ public class BasePage implements TestBase {
         try {
             new Actions(Driver.get()).moveToElement(element).build().perform();
         } catch (Exception e) {
-            Logger.getLogger(BasePage.class.getName()).log(Level.WARNING,
+            Logger.getLogger(SeleniumUtils.class.getName()).log(Level.WARNING,
                     "Erro para utilizar hoverElement(WebElement element)", e);
-            Thread.currentThread().interrupt();
+            throw e;
         }
     }
 
@@ -489,13 +310,12 @@ public class BasePage implements TestBase {
      */
     public static void waitFor( Integer timeInSeconds ) {
         try {
-            int defaultWaitTime = Integer.parseInt(Driver.properties.getProperty("test.timeout.default"));
+            int defaultWaitTime = Integer.parseInt(Config.get("test.timeout.default"));
         	TimeUnit.SECONDS.sleep( (timeInSeconds == null) ? defaultWaitTime : timeInSeconds );
 //            Thread.sleep( (timeInSeconds == null ) ? StaticResources.DEFAULT_WAIT_TIME : timeInSeconds*1000 );
             }
         catch (InterruptedException e) {
-            Logger.getLogger(BasePage.class.getName()).log(Level.WARNING, "Erro para utilizar Thread.sleep()", e);
-            Thread.currentThread().interrupt();
+            Logger.getLogger(SeleniumUtils.class.getName()).log(Level.WARNING, "Erro para utilizar Thread.sleep()", e);
         }
      }
 
@@ -511,7 +331,7 @@ public class BasePage implements TestBase {
      * @param timeInSeconds
      */
     public static void waitToBeVisible( WebElement element, Integer timeInSeconds ) {
-        int defaultWaitTime = Integer.parseInt(Driver.properties.getProperty("test.timeout.default"));
+        int defaultWaitTime = Integer.parseInt(Config.get("test.timeout.default"));
         new WebDriverWait(Driver.get(), Duration.ofSeconds((timeInSeconds == null) ? defaultWaitTime
                 : timeInSeconds)).until( ExpectedConditions.visibilityOf(element) );
     }
@@ -529,7 +349,7 @@ public class BasePage implements TestBase {
      * @param timeInSeconds
      */
     public static void waitToBeVisible(By locator, Integer timeInSeconds) {
-        int defaultWaitTime = Integer.parseInt(Driver.properties.getProperty("test.timeout.default"));
+        int defaultWaitTime = Integer.parseInt(Config.get("test.timeout.default"));
         new WebDriverWait(Driver.get(), Duration.ofSeconds((timeInSeconds == null) ? defaultWaitTime
                 : timeInSeconds)).until(ExpectedConditions.visibilityOf(Driver.get().findElement(locator)));
     }
@@ -553,7 +373,7 @@ public class BasePage implements TestBase {
         exceptions.add(NoSuchElementException.class);
         exceptions.add(NotFoundException.class);
 
-        int defaultWaitTime = Integer.parseInt(Driver.properties.getProperty("test.timeout.default"));
+        int defaultWaitTime = Integer.parseInt(Config.get("test.timeout.default"));
         try {
             return new FluentWait(Driver.get())
                     .withTimeout(Duration.ofSeconds((timeInSeconds == null) ? defaultWaitTime : timeInSeconds))
@@ -592,7 +412,7 @@ public class BasePage implements TestBase {
      * @return
      */
     public static Alert getAlert(Integer timeInSeconds) {
-        int defaultWaitTime = Integer.parseInt(Driver.properties.getProperty("test.timeout.default"));
+        int defaultWaitTime = Integer.parseInt(Config.get("test.timeout.default"));
         return new WebDriverWait(Driver.get(), Duration.ofSeconds((timeInSeconds == null) ? defaultWaitTime
                 : timeInSeconds)).until(ExpectedConditions.alertIsPresent() );
     }
@@ -648,15 +468,13 @@ public class BasePage implements TestBase {
             return conn.getResponseCode();
         }
         catch (MalformedURLException e) {
-            Logger.getLogger(BasePage.class.getName()).log(Level.WARNING,
+            Logger.getLogger(SeleniumUtils.class.getName()).log(Level.WARNING,
                     "Erro para utilizar getStatusCodeFromURL(String targetUrl)", e);
-            Thread.currentThread().interrupt();
             return 0;
         }
         catch (IOException e) {
-            Logger.getLogger(BasePage.class.getName()).log(Level.WARNING,
+            Logger.getLogger(SeleniumUtils.class.getName()).log(Level.WARNING,
                     "Erro para utilizar getStatusCodeFromURL(String targetUrl)", e);
-            Thread.currentThread().interrupt();
             return 0;
         }
     }
@@ -677,8 +495,7 @@ public class BasePage implements TestBase {
             bi = ImageIO.read(element.getScreenshotAs(OutputType.FILE));
             return bi;
         } catch (WebDriverException | IOException e) {
-            Logger.getLogger(BasePage.class.getName()).log(Level.WARNING, "Erro para utilizar getImageFromObject(WebElement element)", e);
-            Thread.currentThread().interrupt();
+            Logger.getLogger(SeleniumUtils.class.getName()).log(Level.WARNING, "Erro para utilizar getImageFromObject(WebElement element)", e);
             return null;
         }
     }
@@ -701,9 +518,9 @@ public class BasePage implements TestBase {
 	public static void validateEquals(Object expected, Object current, String logMessage) {
 		try {
 			Assertions.assertEquals(expected, current);
-			reporter.setPass(logMessage, true);
+			Reports.get().setPass(logMessage, true);
 		} catch (AssertionFailedError e) {
-			reporter.setFail("Test failed due result error.<br/>"+logMessage+".<br/>Expected: {"+expected+"} | Current: {"+current+"}", true);
+			Reports.get().setFail("Test failed due result error.<br/>"+logMessage+".<br/>Expected: {"+expected+"} | Current: {"+current+"}", true);
 			throw e;
 		}
 	}
@@ -711,9 +528,9 @@ public class BasePage implements TestBase {
 	public static void validateTextNotBlank(String value, String logMessage, boolean screenshot) {
 		try {
 			Assertions.assertTrue(value != null && !value.isBlank());
-			reporter.setPass(logMessage, screenshot);
+			Reports.get().setPass(logMessage, screenshot);
 		} catch (AssertionFailedError e) {
-			reporter.setFail("Text validation.<br/>"+logMessage+".", true);
+			Reports.get().setFail("Text validation.<br/>"+logMessage+".", true);
 			throw e;
 		}
 	}
@@ -721,9 +538,9 @@ public class BasePage implements TestBase {
     public static void validateElementIsDisplayed(WebElement element, String logMessage) {
         try {
 			waitToBeVisible(element, null);
-            validateEquals(true, BasePage.elementExists(element), logMessage);
+            validateEquals(true, SeleniumUtils.elementExists(element), logMessage);
 		} catch (AssertionFailedError e) {
-			reporter.setFail("Test failed because element was not visible.<br/>"+logMessage+".<br/>", true);
+			Reports.get().setFail("Test failed because element was not visible.<br/>"+logMessage+".<br/>", true);
 			throw e;
 		}
     }
@@ -759,9 +576,9 @@ public class BasePage implements TestBase {
     public static void selectByText(WebElement select, String visibleText) {
         try {
             new Select(select).selectByVisibleText(visibleText);
-            reporter.setPass("Selected option: " + visibleText, true);
+            Reports.get().setPass("Selected option: " + visibleText, true);
         } catch (Exception e) {
-            reporter.setFail("Failed to select option " + visibleText, true);
+            Reports.get().setFail("Failed to select option " + visibleText, true);
 			throw e;
         }
     }
@@ -769,9 +586,9 @@ public class BasePage implements TestBase {
     public static void selectByValue(WebElement select, String value) {
         try {
             new Select(select).selectByValue(value);
-            reporter.setPass("Selected option by value: " + value, true);
+            Reports.get().setPass("Selected option by value: " + value, true);
         } catch (Exception e) {
-            reporter.setFail("Failed to select option by value " + value, true);
+            Reports.get().setFail("Failed to select option by value " + value, true);
 			throw e;
         }
     }
@@ -779,9 +596,9 @@ public class BasePage implements TestBase {
     public static void selectByIndex(WebElement select, int index) {
         try {
             new Select(select).selectByIndex(index);
-            reporter.setPass("Selected option by index: " + index, true);
+            Reports.get().setPass("Selected option by index: " + index, true);
         } catch (Exception e) {
-            reporter.setFail("Failed to select option by index " + index, true);
+            Reports.get().setFail("Failed to select option by index " + index, true);
 			throw e;
         }
     }
@@ -790,16 +607,16 @@ public class BasePage implements TestBase {
         Driver.get().close();
         Object[] handles = Driver.get().getWindowHandles().toArray();
         Driver.get().switchTo().window((String)handles[0]);
-        reporter.setPass("Return to main window", true);
+        Reports.get().setPass("Return to main window", true);
     }
 
     public static void changeWindow(int index) {
         try {
             Object[] handles = Driver.get().getWindowHandles().toArray();
             Driver.get().switchTo().window((String)handles[index]);
-            reporter.setPass("Changed to window on index: " + index, true);
+            Reports.get().setPass("Changed to window on index: " + index, true);
         } catch (Exception e) {
-            reporter.setFail("Failed to change window on index " + index, true);
+            Reports.get().setFail("Failed to change window on index " + index, true);
 			throw e;
         }
     }
